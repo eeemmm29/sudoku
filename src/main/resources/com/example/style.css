@@ -1,0 +1,33 @@
+.anchorPane {
+    /* -fx-background-image: url('../sdk_img_type1.jpg'); */
+    -fx-background-size: 100% 100%;
+    -fx-background-color: white;
+}
+
+.text-field-style {
+    -fx-alignment: center;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 25.0;
+    -fx-pref-height: 60.0;
+    -fx-pref-width: 60.0;
+}
+
+.default-cell {
+    -fx-text-fill: black;
+}
+
+.correct-guess {
+    -fx-text-fill: blue;
+}
+
+.wrong-guess {
+    -fx-text-fill: red;
+}
+
+.hint {
+    -fx-text-fill: green;
+}
+
+.dark-overlay {
+    -fx-background-color: #00000080;
+}
