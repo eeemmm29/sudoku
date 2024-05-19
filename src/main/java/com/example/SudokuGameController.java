@@ -125,7 +125,7 @@ public class SudokuGameController {
                 cells[finalRow][finalCol].focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         selectedCell = cells[finalRow][finalCol];
-                    }
+                    } // A new line for example
                 });
             }
         }
