@@ -52,6 +52,11 @@ public class Cell extends TextField {
         textProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue.matches("\\d") && !newValue.isEmpty()) {
                 setText(oldValue);
+            }
+
+            // Check if the new value is empty
+            if (newValue.isEmpty()) {
+                // Apply CSS style when the text is cleared (likely by backspace)
                 getStyleClass().clear();
                 getStyleClass().add("text-field-style");
             }

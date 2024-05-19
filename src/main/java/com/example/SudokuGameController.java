@@ -127,14 +127,6 @@ public class SudokuGameController {
                         selectedCell = cells[finalRow][finalCol];
                     }
                 });
-
-                // Add key event filter for Backspace
-                cells[row][col].addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                    if (event.getCode() == KeyCode.BACK_SPACE) {
-                        handleBackspaceKey(cells[finalRow][finalCol]);
-                        event.consume();
-                    }
-                });
             }
         }
         
@@ -164,16 +156,6 @@ public class SudokuGameController {
         newGame(currentDifficulty.get());
         btnNewGame.setOnAction(event -> newGame(currentDifficulty.get()));
         hint.setOnAction(event -> handleHintButtonClick()); // Add hint button handler
-    }
-
-    // TODO better handle backspace
-    private void handleBackspaceKey(Cell cell) {
-        if (cell.isEditable()) {
-            cell.setText("");
-            cell.setStatus(CellStatus.TO_GUESS);
-            cell.getStyleClass().clear();;
-            cell.getStyleClass().add("text-field-style");
-        }
     }
 
     /**

@@ -182,5 +182,10 @@
             <Font name="Arial Bold" size="17.0" />
          </font>
       </Text>
+      <Label fx:id="score" layoutX="340.0" layoutY="71.0" prefHeight="25.0" prefWidth="84.0" text="score">
+         <font>
+            <Font name="Arial Bold" size="17.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
