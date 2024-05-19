@@ -1,2 +1,2 @@
-# sudoku
-Sudoku made with JavaFX
+# Sudoku
+A sudoku project made with JavaFX
