@@ -6,37 +6,50 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ReadOnlyProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
+import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.Node;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 public class SudokuGameController {
     private int easy = 40;
     private int medium = 50;
     private int hard = 60;
+    private int currentScore = 0;
+    private int currentMistakes = 0;
     private final IntegerProperty currentDifficulty = new SimpleIntegerProperty(easy);
     private String currentDifficultyStr = "Easy";
     private Timeline timeline;
     private int seconds;
     private Cell selectedCell;
     private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
+    private final CellInputListener listener = new CellInputListener();
     private Puzzle puzzle = new Puzzle();
     
     @FXML private AnchorPane mainPane;
+    @FXML private Label scoreLabel;
+    @FXML private Label mistakesLabel;
     @FXML private Label difficultyLabel;
     @FXML private Label timeLabel;
     @FXML private ImageView top;
@@ -82,12 +95,73 @@ public class SudokuGameController {
         chooseDifficulty.setVisible(false);
     }
 
+    /**
+     * Generate a new puzzle and reset the game board of cells based on the puzzle.
+     * You can call this method to start a new game.
+     */
+    @FXML
+    private void newGame() {
+        // Temporarily remove listeners from cells
+        removeCellListeners();
+        // Reset mistakes
+        currentMistakes = 0;
+        mistakesLabel.setText("0");
+        // Reset score
+        currentScore = 0;
+        scoreLabel.setText("0");
+
+        puzzle.newPuzzle(currentDifficulty.get());
+        difficultyLabel.setText(currentDifficultyStr);
+        currentScore = 0;
+        
+        // Initialize all the 9x9 cells, based on the puzzle.
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                cells[row][col].setNumberAndStatus(0, false);
+                cells[row][col].setNumberAndStatus(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
+                cells[row][col].getStyleClass().clear();
+                cells[row][col].getStyleClass().add("text-field-style");
+            }
+        }
+
+        // Reattach listeners to cells
+        addCellListeners();
+
+        // Reset the timer
+        seconds = 0;
+        timeLabel.setText("00:00:00");
+        if (timeline != null) {
+            timeline.stop();
+        }
+        startTimer();
+
+        System.out.println("A new game has been created with difficulty: " + currentDifficultyStr);
+    }
+    
+    private void addCellListeners() {
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                if (cells[row][col].isEditable()) {
+                    cells[row][col].textProperty().addListener(listener);
+                }
+            }
+        }
+    }
+
+    private void removeCellListeners() {
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                    cells[row][col].textProperty().removeListener(listener);
+            }
+        }
+    }
+
     @FXML
     private void newGameEasyDifficulty() {
         closeChooseDifficultyMenu();
         currentDifficulty.setValue(easy);
         currentDifficultyStr = "Easy";
-        newGame(currentDifficulty.get());
+        newGame();
     }
 
     @FXML
@@ -95,7 +169,7 @@ public class SudokuGameController {
         closeChooseDifficultyMenu();
         currentDifficulty.setValue(medium);
         currentDifficultyStr = "Medium";
-        newGame(currentDifficulty.get());
+        newGame();
     }
 
     @FXML
@@ -103,10 +177,35 @@ public class SudokuGameController {
         closeChooseDifficultyMenu();
         currentDifficulty.setValue(hard);
         currentDifficultyStr = "Hard";
-        newGame(currentDifficulty.get());
+        newGame();
+    }
+
+    @FXML
+    private void handleHintButtonClick() {
+        List<Cell> emptyCells = new ArrayList<>();
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
+                if (cells[row][col].isEditable() && cells[row][col].getText().isEmpty()) {
+                    emptyCells.add(cells[row][col]);
+                }
+            }
+        }
+
+        if (!emptyCells.isEmpty()) {
+            Random random = new Random();
+            Cell hintCell = emptyCells.get(random.nextInt(emptyCells.size()));
+            int row = hintCell.getRow();
+            int col = hintCell.getCol();
+            hintCell.setText(String.valueOf(puzzle.numbers[row][col]));
+            hintCell.setStatus(CellStatus.CORRECT_GUESS);
+            System.out.println("hint has been activated");
+            hintCell.getStyleClass().addAll("text-field-style", "hint");
+            hintCell.setEditable(false);
+        }
     }
 
     public void initialize() {
+        
         gridPane.setAlignment(Pos.CENTER);
 
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
@@ -125,66 +224,22 @@ public class SudokuGameController {
                 cells[finalRow][finalCol].focusedProperty().addListener((observable, oldValue, newValue) -> {
                     if (newValue) {
                         selectedCell = cells[finalRow][finalCol];
-                    } // A new line for example
+                    }
                 });
             }
         }
         
         gridPane.addEventFilter(KeyEvent.KEY_PRESSED, this::handleArrowNavigation);
 
-        CellInputListener listener = new CellInputListener();
-  
-        for (int row = 0; row < cells.length; row++) {
-            for (int col = 0; col < cells[row].length; col++) {
-               if (cells[row][col].isEditable()) {
-                  cells[row][col].setOnAction(listener);   // For all editable rows and cols
-               }
-            }
-        }
-
         // Setting up number button handlers
-        button_one.setOnAction(event -> handleNumberButtonClick(1));
-        button_two.setOnAction(event -> handleNumberButtonClick(2));
-        button_three.setOnAction(event -> handleNumberButtonClick(3));
-        button_four.setOnAction(event -> handleNumberButtonClick(4));
-        button_five.setOnAction(event -> handleNumberButtonClick(5));
-        button_six.setOnAction(event -> handleNumberButtonClick(6));
-        button_seven.setOnAction(event -> handleNumberButtonClick(7));
-        button_eight.setOnAction(event -> handleNumberButtonClick(8));
-        button_nine.setOnAction(event -> handleNumberButtonClick(9));
-
-        newGame(currentDifficulty.get());
-        btnNewGame.setOnAction(event -> newGame(currentDifficulty.get()));
-        hint.setOnAction(event -> handleHintButtonClick()); // Add hint button handler
-    }
-
-    /**
-     * Generate a new puzzle and reset the game board of cells based on the puzzle.
-     * You can call this method to start a new game.
-     */
-    public void newGame(int difficulty) {
-        puzzle.newPuzzle(difficulty);
-        difficultyLabel.setText(currentDifficultyStr);
-        
-        // Initialize all the 9x9 cells, based on the puzzle.
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                cells[row][col].setNumberAndStatus(0, false);
-                cells[row][col].setNumberAndStatus(puzzle.numbers[row][col], puzzle.isGiven[row][col]);
-                cells[row][col].getStyleClass().clear();
-                cells[row][col].getStyleClass().add("text-field-style");
-            }
+        Button[] numberButtons = {button_one, button_two, button_three, button_four, button_five, button_six, button_seven, button_eight, button_nine};
+        for (int i = 0; i < numberButtons.length; i++) {
+            final int number = i + 1;
+            numberButtons[i].setUserData(number);
+            numberButtons[i].setOnAction(numberButtonHandler);
         }
 
-        // Reset the timer
-        seconds = 0;
-        timeLabel.setText("00:00:00");
-        if (timeline != null) {
-            timeline.stop();
-        }
-        startTimer();
-
-        System.out.println("A new game has been created");
+        newGame();
     }
 
     /**
@@ -228,20 +283,26 @@ public class SudokuGameController {
         }
     }
 
-    private class CellInputListener implements EventHandler<ActionEvent> {
+    // TODO
+    private class CellInputListener implements ChangeListener<String> {
         @Override
-        public void handle(ActionEvent event) {
-            // Get a reference of the Cell that triggers this action event
-            Cell sourceCell = (Cell) event.getSource();
+        public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
-            selectedCell = sourceCell;
-    
-            // Retrieve the text entered in the cell
-            String text = sourceCell.getText();
+            // Debugging output to verify values
+            System.out.println("Old Value: " + oldValue + ", New Value: " + newValue);
+
+            // Do nothing if the new value is the same as the old value
+            if (newValue == oldValue) {
+                System.out.println("No change in value, skipping processing.");
+                return;
+            }
+
+            // Get a reference of the Cell that triggers this action event
+            Cell sourceCell = (Cell) ((ReadOnlyProperty) observable).getBean();
     
             // Try parsing the text to an integer
             try {
-                int numberIn = Integer.parseInt(text);
+                int numberIn = Integer.parseInt(newValue);
                 // Rest of your code handling the parsed integer
             
                 /*
@@ -251,14 +312,23 @@ public class SudokuGameController {
                 */
                 if (numberIn == sourceCell.getNumber()) {
                     sourceCell.setStatus(CellStatus.CORRECT_GUESS);
-                    sourceCell.getStyleClass().addAll("text-field-style", "correct-guess");
+                    sourceCell.getStyleClass().add("correct-guess");
                     sourceCell.setEditable(false);
                     System.out.println("Correct guess");
+
+                    currentScore += 30;
                 } else {
                     sourceCell.setStatus(CellStatus.WRONG_GUESS);
-                    sourceCell.getStyleClass().addAll("text-field-style", "wrong-guess");
+                    sourceCell.getStyleClass().add("wrong-guess");
                     System.out.println("Wrong guess");
+
+                    currentMistakes++;
+                    mistakesLabel.setText(Integer.toString(currentMistakes));
+
+                    currentScore = Math.max(currentScore - 10, 0);
                 }
+
+                scoreLabel.setText(Integer.toString(currentScore));
                 
                 // For debugging
                 System.out.println("You entered " + numberIn);
@@ -276,40 +346,21 @@ public class SudokuGameController {
                 }
             } catch (NumberFormatException e) {
                 // Handle the case where the text is not a valid integer
-                System.err.println("Invalid input: " + text);
+                System.err.println("Invalid input: " + newValue);
             }
         }
     }
 
-    private void handleNumberButtonClick(int number) {
-        if (selectedCell != null && selectedCell.isEditable()) {
-            selectedCell.setText(String.valueOf(number));
-            selectedCell.fireEvent(new ActionEvent());
-        }
-    }
-
-    private void handleHintButtonClick() {
-        List<Cell> emptyCells = new ArrayList<>();
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
-                if (cells[row][col].isEditable() && cells[row][col].getText().isEmpty()) {
-                    emptyCells.add(cells[row][col]);
-                }
+    EventHandler<ActionEvent> numberButtonHandler = new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+            if (selectedCell != null && selectedCell.isEditable()) {
+                Button sourceButton = (Button) event.getSource();
+                int number = (int) sourceButton.getUserData();
+                selectedCell.setText(Integer.toString(number));
             }
         }
-
-        if (!emptyCells.isEmpty()) {
-            Random random = new Random();
-            Cell hintCell = emptyCells.get(random.nextInt(emptyCells.size()));
-            int row = hintCell.getRow();
-            int col = hintCell.getCol();
-            hintCell.setText(String.valueOf(puzzle.numbers[row][col]));
-            hintCell.setStatus(CellStatus.CORRECT_GUESS);
-            System.out.println("hint has been activated");
-            hintCell.getStyleClass().addAll("text-field-style", "hint");
-            hintCell.setEditable(false);
-        }
-    }
+    };
 
     private void startTimer() {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {

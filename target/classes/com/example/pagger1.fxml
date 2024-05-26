@@ -49,7 +49,7 @@
       <Line endX="517.0" endY="29.0" layoutX="-73.0" layoutY="139.0" startX="517.0" startY="569.0" strokeWidth="0.4" />
       <Line endX="516.5" endY="16.5" layoutX="107.0" layoutY="151.0" startX="516.5" startY="557.5" />
       <Button layoutX="762.0" layoutY="126.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="26.0" text="Button" />
-      <Button fx:id="hint" layoutX="645.0" layoutY="722.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="139.0" text="Hint">
+      <Button fx:id="hint" layoutX="645.0" layoutY="722.0" mnemonicParsing="false" onAction="#handleHintButtonClick" prefHeight="53.0" prefWidth="139.0" text="Hint">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font>
@@ -59,7 +59,7 @@
             <Font name="Arial Bold" size="12.0" />
          </font>
       </Button>
-      <Button fx:id="btnNewGame" layoutX="285.0" layoutY="722.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="139.0" text="New game">
+      <Button fx:id="btnNewGame" layoutX="285.0" layoutY="722.0" mnemonicParsing="false" onAction="#newGame" prefHeight="53.0" prefWidth="139.0" text="New game">
          <font>
             <Font name="Arial Bold" size="12.0" />
          </font>
@@ -182,7 +182,12 @@
             <Font name="Arial Bold" size="17.0" />
          </font>
       </Text>
-      <Label fx:id="score" layoutX="340.0" layoutY="71.0" prefHeight="25.0" prefWidth="84.0" text="score">
+      <Label fx:id="scoreLabel" layoutX="340.0" layoutY="71.0" prefHeight="25.0" prefWidth="84.0" text="score">
+         <font>
+            <Font name="Arial Bold" size="17.0" />
+         </font>
+      </Label>
+      <Label fx:id="mistakesLabel" layoutX="361.0" layoutY="126.0" prefHeight="25.0" prefWidth="84.0" text="mistakes">
          <font>
             <Font name="Arial Bold" size="17.0" />
          </font>

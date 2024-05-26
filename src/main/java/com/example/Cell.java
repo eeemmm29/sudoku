@@ -29,7 +29,10 @@
 
 package com.example;
 
+import java.util.function.UnaryOperator;
+
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 
 /**
  * The Cell class models the cells of the Sudoku puzzle by storing puzzle number and status.
@@ -46,22 +49,28 @@ public class Cell extends TextField {
     public Cell() {
         // Constructor chaining to TextField
         super();
-
-
-        // Add listener to restrict the length and allow only digits and backspace
-        textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("\\d") && !newValue.isEmpty()) {
-                setText(oldValue);
-            }
-
-            // Check if the new value is empty
-            if (newValue.isEmpty()) {
-                // Apply CSS style when the text is cleared (likely by backspace)
-                getStyleClass().clear();
-                getStyleClass().add("text-field-style");
-            }
-        });
+        setTextFormatter(new TextFormatter<>(digitFilter));
     }
+
+    UnaryOperator<TextFormatter.Change> digitFilter = change -> {
+        String newText = change.getControlNewText();
+        // Allow empty input to clear the text field
+        if (newText.isEmpty()) {
+            return change;
+        }
+        // Check if the new text is a valid integer and contains only one digit
+        if (newText.matches("\\d?")) {
+            return change;
+        }
+        // Check if the new text is a multi-digit number and extract the last digit
+        if (newText.length() > 1 && newText.matches("\\d+")) {
+            change.setText(newText.substring(newText.length() - 1));
+            change.setRange(0, change.getControlText().length());
+            return change;
+        }
+        // Otherwise, reject the change
+        return null;
+    };
 
     /**
      * Set the puzzle number and status for this cell.

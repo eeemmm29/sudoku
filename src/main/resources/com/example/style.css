@@ -17,7 +17,7 @@
 }
 
 .correct-guess {
-    -fx-text-fill: blue;
+    -fx-text-fill: blue !important;
 }
 
 .wrong-guess {
