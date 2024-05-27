@@ -58,8 +58,8 @@ public class Cell extends TextField {
         if (newText.isEmpty()) {
             return change;
         }
-        // Check if the new text is a valid integer and contains only one digit
-        if (newText.matches("\\d?")) {
+        // Check if the new text is a valid integer between 1 and 9 and contains only one digit
+        if (newText.matches("[1-9]")) {
             return change;
         }
         // Check if the new text is a multi-digit number and extract the last digit

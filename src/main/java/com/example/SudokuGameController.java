@@ -188,15 +188,18 @@ public class SudokuGameController {
         }
 
         if (!emptyCells.isEmpty()) {
+            System.out.println("hint has been activated");
+
             Random random = new Random();
             Cell hintCell = emptyCells.get(random.nextInt(emptyCells.size()));
             int row = hintCell.getRow();
             int col = hintCell.getCol();
+
+            hintCell.getStyleClass().addAll("text-field-style", "hint");
             hintCell.setText(String.valueOf(puzzle.numbers[row][col]));
             hintCell.setStatus(CellStatus.CORRECT_GUESS);
-            System.out.println("hint has been activated");
-            hintCell.getStyleClass().addAll("text-field-style", "hint");
             hintCell.setEditable(false);
+
             currentScore = Math.max(currentScore - 40, 0);
             scoreLabel.setText(Integer.toString(currentScore));
         }
@@ -252,6 +255,8 @@ public class SudokuGameController {
                 }
             }
         }
+        // TODO
+        System.out.println("Puzzle solved!");
         return true;
     }
 
@@ -331,10 +336,12 @@ public class SudokuGameController {
                 System.out.println("You entered " + numberIn);
 
                 /*
-                    * Check if the player has solved the puzzle after this move,
-                    * by calling isSolved(). Put up a congratulation JOptionPane, if so.
-                    */
+                * Check if the player has solved the puzzle after this move,
+                * by calling isSolved(). Put up a congratulation JOptionPane, if so.
+                */
                 if (isSolved()) {
+                    System.out.println("Puzzle solved!");
+                    stopTimer();
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Congratulations!");
                     alert.setHeaderText(null);
@@ -369,5 +376,12 @@ public class SudokuGameController {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+    }
+
+    private void stopTimer() {
+        System.out.println("stopTimer called");
+        if (timeline != null) {
+            timeline.stop();
+        }
     }
 }
