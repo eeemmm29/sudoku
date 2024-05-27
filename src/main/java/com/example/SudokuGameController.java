@@ -18,9 +18,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextFormatter;
-import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -30,7 +27,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.function.UnaryOperator;
 
 public class SudokuGameController {
     private int easy = 40;
@@ -201,6 +197,8 @@ public class SudokuGameController {
             System.out.println("hint has been activated");
             hintCell.getStyleClass().addAll("text-field-style", "hint");
             hintCell.setEditable(false);
+            currentScore = Math.max(currentScore - 40, 0);
+            scoreLabel.setText(Integer.toString(currentScore));
         }
     }
 
@@ -283,7 +281,6 @@ public class SudokuGameController {
         }
     }
 
-    // TODO
     private class CellInputListener implements ChangeListener<String> {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {

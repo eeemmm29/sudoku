@@ -25,7 +25,7 @@
 }
 
 .hint {
-    -fx-text-fill: green;
+    -fx-text-fill: green !important;
 }
 
 .dark-overlay {
