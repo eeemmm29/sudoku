@@ -14,10 +14,10 @@ import javafx.beans.value.ObservableValue;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -26,10 +26,12 @@ import javafx.scene.Node;
 import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 public class SudokuGameController {
-    private int easy = 40;
+    // private int easy = 40;
+    private int easy = 3;
     private int medium = 50;
     private int hard = 60;
     private int currentScore = 0;
@@ -42,6 +44,10 @@ public class SudokuGameController {
     private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     private final CellInputListener listener = new CellInputListener();
     private Puzzle puzzle = new Puzzle();
+    private DatabaseManager dm = new DatabaseManager();
+
+    // A dark overlay for the menus that appear above the main menu
+    @FXML private AnchorPane darkOverlay;
     
     @FXML private AnchorPane mainPane;
     @FXML private Label scoreLabel;
@@ -50,7 +56,6 @@ public class SudokuGameController {
     @FXML private Label timeLabel;
     @FXML private ImageView top;
     @FXML private GridPane gridPane;
-    @FXML private Button btnChangeDifficulty;
 
     // Number buttons
     @FXML private Button button_one;
@@ -67,13 +72,23 @@ public class SudokuGameController {
     @FXML private Button btnNewGame;
     // Hint button
     @FXML private Button hint;
+    // Used for counting score correctly
+    private boolean isHint;
     // Note button
     @FXML private Button note;
 
-    // Overlay
-    @FXML private AnchorPane darkOverlay;
-    // Choose difficulty menu
-    @FXML private AnchorPane chooseDifficulty;
+    private void openMenu(AnchorPane menu) {
+        darkOverlay.setVisible(true);
+        menu.setVisible(true);
+    }
+
+    private void closeMenu(AnchorPane menu) {
+        darkOverlay.setVisible(false);
+        menu.setVisible(false);
+    }
+
+    // Overlay with the difficulty menu
+    @FXML private AnchorPane chooseDifficultyMenu;
     // difficulty buttons in the menu
     @FXML private Button easyDifficultyButton;
     @FXML private Button mediumDifficultyButton;
@@ -81,14 +96,67 @@ public class SudokuGameController {
 
     @FXML
     private void openChooseDifficultyMenu() {
-        darkOverlay.setVisible(true);
-        chooseDifficulty.setVisible(true);
+        openMenu(chooseDifficultyMenu);
     }
 
     @FXML
     private void closeChooseDifficultyMenu() {
-        darkOverlay.setVisible(false);
-        chooseDifficulty.setVisible(false);
+        closeMenu(chooseDifficultyMenu);
+    }
+
+    // Overlay with the leaderboard menu
+    @FXML private AnchorPane leaderboardMenu;
+    // Places
+    @FXML private Label firstPlaceName;
+    @FXML private Label firstPlaceScore;
+    @FXML private Label firstPlaceTime;
+
+    @FXML private Label secondPlaceName;
+    @FXML private Label secondPlaceScore;
+    @FXML private Label secondPlaceTime;
+
+    @FXML private Label thirdPlaceName;
+    @FXML private Label thirdPlaceScore;
+    @FXML private Label thirdPlaceTime;
+
+    @FXML private Label fourthPlaceName;
+    @FXML private Label fourthPlaceScore;
+    @FXML private Label fourthPlaceTime;
+
+    @FXML private Label fifthPlaceName;
+    @FXML private Label fifthPlaceScore;
+    @FXML private Label fifthPlaceTime;
+
+    @FXML
+    private void openLeaderboardMenu() {
+        // 2D array to store labels for each place
+        Label[][] places = {
+            {firstPlaceName, firstPlaceScore, firstPlaceTime},
+            {secondPlaceName, secondPlaceScore, secondPlaceTime},
+            {thirdPlaceName, thirdPlaceScore, thirdPlaceTime},
+            {fourthPlaceName, fourthPlaceScore, fourthPlaceTime},
+            {fifthPlaceName, fifthPlaceScore, fifthPlaceTime}
+        };
+        List<Score> topFiveScores= dm.getTopFiveScores();
+        for (int i = 0; i < topFiveScores.size(); i++) {
+            Score score = topFiveScores.get(i);
+            System.out.println(score.toString());
+            places[i][0].setText(score.getPlayerName());
+            places[i][1].setText(Integer.toString(score.getScore()));
+            places[i][2].setText(score.getTime_formatted());
+        }
+        openMenu(leaderboardMenu);
+    }
+
+    @FXML
+    private void closeLeaderboardMenu() {
+        closeMenu(leaderboardMenu);
+    }
+
+    @FXML
+    private void openSettingsMenu() {
+        // TODO settings menu
+        System.out.println("Settings");
     }
 
     /**
@@ -108,7 +176,6 @@ public class SudokuGameController {
 
         puzzle.newPuzzle(currentDifficulty.get());
         difficultyLabel.setText(currentDifficultyStr);
-        currentScore = 0;
         
         // Initialize all the 9x9 cells, based on the puzzle.
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
@@ -178,6 +245,8 @@ public class SudokuGameController {
 
     @FXML
     private void handleHintButtonClick() {
+        isHint = true;
+
         List<Cell> emptyCells = new ArrayList<>();
         for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
@@ -199,13 +268,12 @@ public class SudokuGameController {
             hintCell.setText(String.valueOf(puzzle.numbers[row][col]));
             hintCell.setStatus(CellStatus.CORRECT_GUESS);
             hintCell.setEditable(false);
-
-            currentScore = Math.max(currentScore - 40, 0);
-            scoreLabel.setText(Integer.toString(currentScore));
         }
     }
 
     public void initialize() {
+
+        dm.createDatabaseTable();
         
         gridPane.setAlignment(Pos.CENTER);
 
@@ -255,8 +323,6 @@ public class SudokuGameController {
                 }
             }
         }
-        // TODO
-        System.out.println("Puzzle solved!");
         return true;
     }
 
@@ -318,7 +384,9 @@ public class SudokuGameController {
                     sourceCell.setEditable(false);
                     System.out.println("Correct guess");
 
-                    currentScore += 30;
+                    if (isHint) currentScore = Math.max(currentScore - 10, 0);
+                    else currentScore += 30;
+                    isHint = false;
                 } else {
                     sourceCell.setStatus(CellStatus.WRONG_GUESS);
                     sourceCell.getStyleClass().add("wrong-guess");
@@ -342,11 +410,30 @@ public class SudokuGameController {
                 if (isSolved()) {
                     System.out.println("Puzzle solved!");
                     stopTimer();
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Congratulations!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("Puzzle solved!");
-                    alert.showAndWait();
+
+                    // Alert alert = new Alert(AlertType.INFORMATION);
+                    // alert.setTitle("Congratulations!");
+                    // alert.setHeaderText(null);
+                    // alert.setContentText("Puzzle solved!");
+                    // alert.showAndWait();
+                    
+                    TextInputDialog td = new TextInputDialog();
+                    td.setTitle("Congratulations");
+                    td.setHeaderText("Puzzle solved!\nEnter your name"); 
+
+                    Button okButton = (Button) td.getDialogPane().lookupButton(ButtonType.OK);
+                    // Disable the OK button initially
+                    okButton.setDisable(true);
+
+                    // Add a listener to the input field to enable/disable the OK button based on input
+                    td.getEditor().textProperty().addListener((observabletd, oldValuetd, newValuetd) -> {
+                        okButton.setDisable(newValuetd.trim().isEmpty());
+                    });
+
+                    Optional<String> result = td.showAndWait();
+                    result.ifPresent(name -> {
+                        dm.insertData(name, currentScore, seconds, timeLabel.getText());
+                    });
                 }
             } catch (NumberFormatException e) {
                 // Handle the case where the text is not a valid integer
@@ -379,7 +466,6 @@ public class SudokuGameController {
     }
 
     private void stopTimer() {
-        System.out.println("stopTimer called");
         if (timeline != null) {
             timeline.stop();
         }
