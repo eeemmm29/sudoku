@@ -31,3 +31,23 @@
 .dark-overlay {
     -fx-background-color: #00000080;
 }
+
+.first-place {
+    -fx-border-color: gold;
+    -fx-border-width: 5;
+}
+
+.second-place {
+    -fx-border-color: silver;
+    -fx-border-width: 5;
+}
+
+.third-place {
+    -fx-border-color: #CD7F32;
+    -fx-border-width: 5;
+}
+
+.other-place {
+    -fx-border-color: black;
+    -fx-border-width: 5;
+}
