@@ -71,12 +71,12 @@
             <Line endX="-100.0" endY="772.0" layoutX="910.0" layoutY="97.0" startX="-100.0" startY="-71.0" stroke="#867979" />
             <Line endX="-113.0" endY="-92.5" layoutX="923.0" layoutY="118.0" startX="-665.0" startY="-93.0" stroke="#867979" />
             <Line endX="-113.0" endY="-92.5" layoutX="923.0" layoutY="962.0" startX="-665.0" startY="-93.0" stroke="#867979" />
-            <Button layoutX="434.0" layoutY="67.0" mnemonicParsing="false" onAction="#openChooseDifficultyMenu" prefHeight="32.0" prefWidth="200.0" text="Choose difficulty">
+            <Button layoutX="434.0" layoutY="77.0" mnemonicParsing="false" onAction="#openChooseDifficultyMenu" prefHeight="32.0" prefWidth="200.0" text="Choose difficulty">
                <font>
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Button>
-            <Button layoutX="687.0" layoutY="61.0" mnemonicParsing="false" onAction="#openLeaderboardMenu" prefHeight="45.0" prefWidth="56.0">
+            <Button layoutX="687.0" layoutY="70.0" mnemonicParsing="false" onAction="#openLeaderboardMenu" prefHeight="45.0" prefWidth="56.0">
                <graphic>
                   <ImageView fx:id="cupid1" fitHeight="37.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -85,7 +85,7 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="749.0" layoutY="61.0" mnemonicParsing="false" onAction="#openSettingsMenu">
+            <Button layoutX="749.0" layoutY="70.0" mnemonicParsing="false" onAction="#openSettingsMenu">
                <graphic>
                   <ImageView fx:id="cupid11" fitHeight="37.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -153,7 +153,7 @@
                   </Button>
                </children>
             </HBox>
-            <Text layoutX="271.0" layoutY="89.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score:" wrappingWidth="78.0">
+            <Text layoutX="273.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Score:" wrappingWidth="78.0">
                <font>
                   <Font name="Arial Bold" size="17.0" />
                </font>
@@ -168,7 +168,7 @@
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Text>
-            <Label fx:id="scoreLabel" layoutX="340.0" layoutY="71.0" prefHeight="25.0" prefWidth="84.0" text="score">
+            <Label fx:id="scoreLabel" layoutX="342.0" layoutY="81.0" prefHeight="25.0" prefWidth="84.0" text="score">
                <font>
                   <Font name="Arial Bold" size="17.0" />
                </font>
@@ -178,6 +178,11 @@
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Label>
+            <Button fx:id="pauseButton" layoutX="495.0" layoutY="35.0" mnemonicParsing="false" onAction="#handlePauseButton" prefHeight="32.0" prefWidth="78.0" text="Pause">
+               <font>
+                  <Font name="Arial Bold" size="17.0" />
+               </font>
+            </Button>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="darkOverlay" prefHeight="913.0" prefWidth="1069.0" styleClass="dark-overlay" stylesheets="@style.css" visible="false" />

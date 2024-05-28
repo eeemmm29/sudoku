@@ -31,15 +31,19 @@ import java.util.Random;
 
 public class SudokuGameController {
     // private int easy = 40;
-    private int easy = 3;
+    private int easy = 40;
     private int medium = 50;
     private int hard = 60;
     private int currentScore = 0;
     private int currentMistakes = 0;
     private final IntegerProperty currentDifficulty = new SimpleIntegerProperty(easy);
     private String currentDifficultyStr = "Easy";
+
     private Timeline timeline;
     private int seconds;
+    private boolean isTimerRunning = false;
+    private int previousSeconds = 0;
+
     private Cell selectedCell;
     private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     private final CellInputListener listener = new CellInputListener();
@@ -68,6 +72,16 @@ public class SudokuGameController {
     @FXML private Button button_eight;
     @FXML private Button button_nine;
     
+    // Pause button
+    @FXML private Button pauseButton;
+
+    @FXML private void handlePauseButton() {
+        boolean visible = gridPane.isVisible();
+        gridPane.setVisible(!visible);
+        if (visible) stopTimer();
+        else continueTimer();
+    }
+
     // New game button
     @FXML private Button btnNewGame;
     // Hint button
@@ -463,11 +477,22 @@ public class SudokuGameController {
         }));
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();
+        isTimerRunning = true;
     }
 
     private void stopTimer() {
         if (timeline != null) {
             timeline.stop();
+            isTimerRunning = false;
+            previousSeconds = seconds;
+        }
+    }
+
+    private void continueTimer() {
+        if (!isTimerRunning) {
+            timeline.play();
+            seconds = previousSeconds; // Restore previous count
+            isTimerRunning = true;
         }
     }
 }
