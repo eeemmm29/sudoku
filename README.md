@@ -38,6 +38,8 @@ The database is implemented using SQLite, which we were learning about for a whi
 
 For the frontend Scene builder was used. It’s not too fancy but using it was fun and gave us a lot of valuable experience.
 
+For project synchronization and better communication we used GitHub (it was for the first time for me).
+
 # Challenges faced and how they were resolved:
 The main challenge at first was connecting the backend to the frontend because we were making them separately. My program was creating a board of new TextFields in the corner of the screen and I just couldn’t figure out how to connect them with the TextFields in the FXML file that my groupmate gave me. I then reached out to google and looked around how people were making sudoku games with JavaFX. After some time I found out about a class called GridPane in which you can insert any other objects and they will be displayed in a grid you can easily manipulate in Scene Builder. With this knowledge I replaced all the existing TextFields (That were just manually placed as a grid at first) with a GridPane and made it so it’s filled with Cells inside the program.
 
