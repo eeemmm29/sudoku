@@ -17,7 +17,7 @@
 
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="913.0" prefWidth="1069.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.SudokuGameController">
    <children>
-      <AnchorPane fx:id="mainMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="913.0" prefWidth="1069.0" styleClass="anchorPane" stylesheets="@style.css">
+      <AnchorPane fx:id="mainMenu" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="913.0" prefWidth="1069.0" styleClass="anchorPaneDef" stylesheets="@style.css">
          <children>
             <GridPane fx:id="gridPane" alignment="CENTER" gridLinesVisible="true" layoutX="263.0" layoutY="167.0" prefHeight="542.0" prefWidth="542.0">
                <columnConstraints>
@@ -51,32 +51,31 @@
             <Line endX="516.5" endY="16.5" layoutX="-253.0" layoutY="151.0" startX="516.5" startY="557.5" />
             <Line endX="517.0" endY="29.0" layoutX="-73.0" layoutY="139.0" startX="517.0" startY="569.0" strokeWidth="0.4" />
             <Line endX="516.5" endY="16.5" layoutX="107.0" layoutY="151.0" startX="516.5" startY="557.5" />
-            <Button layoutX="762.0" layoutY="126.0" mnemonicParsing="false" prefHeight="16.0" prefWidth="26.0" text="Button" />
-            <Button fx:id="hint" layoutX="645.0" layoutY="722.0" mnemonicParsing="false" onAction="#handleHintButtonClick" prefHeight="53.0" prefWidth="139.0" text="Hint">
+            <Button fx:id="hint" layoutX="645.0" layoutY="722.0" mnemonicParsing="false" onAction="#handleHintButtonClick" prefHeight="53.0" prefWidth="139.0" styleClass="lowerButtons" stylesheets="@style.css" text="Hint">
                <font>
-                  <Font name="Arial Bold" size="12.0" />
+                  <Font name="Arial Bold" size="14.0" />
                </font>
             </Button>
-            <Button fx:id="note" layoutX="467.0" layoutY="722.0" mnemonicParsing="false" prefHeight="53.0" prefWidth="139.0" text="Note">
+            <Button fx:id="note" layoutX="467.0" layoutY="722.0" mnemonicParsing="false" onAction="#handleNoteButton" prefHeight="53.0" prefWidth="139.0" styleClass="lowerButtons" stylesheets="@style.css" text="Note">
                <font>
-                  <Font name="Arial Bold" size="12.0" />
+                  <Font name="Arial Bold" size="14.0" />
                </font>
             </Button>
-            <Button fx:id="btnNewGame" layoutX="285.0" layoutY="722.0" mnemonicParsing="false" onAction="#newGame" prefHeight="53.0" prefWidth="139.0" text="New game">
+            <Button fx:id="btnNewGame" layoutX="285.0" layoutY="722.0" mnemonicParsing="false" onAction="#newGame" prefHeight="53.0" prefWidth="139.0" styleClass="lowerButtons" stylesheets="@style.css" text="New game">
                <font>
-                  <Font name="Arial Bold" size="12.0" />
+                  <Font name="Arial Bold" size="14.0" />
                </font>
             </Button>
-            <Line endX="-100.0" endY="772.0" layoutX="358.0" layoutY="97.0" startX="-100.0" startY="-71.0" stroke="#867979" />
-            <Line endX="-100.0" endY="772.0" layoutX="910.0" layoutY="97.0" startX="-100.0" startY="-71.0" stroke="#867979" />
-            <Line endX="-113.0" endY="-92.5" layoutX="923.0" layoutY="118.0" startX="-665.0" startY="-93.0" stroke="#867979" />
+            <Line endX="-100.0" endY="772.0" layoutX="358.0" layoutY="97.0" startX="-100.0" startY="-34.0" stroke="#867979" />
+            <Line endX="-100.0" endY="772.0" layoutX="910.0" layoutY="97.0" startX="-100.0" startY="-34.0" stroke="#867979" />
+            <Line endX="-113.0" endY="-92.5" layoutX="923.0" layoutY="156.0" startX="-665.0" startY="-93.0" stroke="#867979" />
             <Line endX="-113.0" endY="-92.5" layoutX="923.0" layoutY="962.0" startX="-665.0" startY="-93.0" stroke="#867979" />
-            <Button layoutX="434.0" layoutY="77.0" mnemonicParsing="false" onAction="#openChooseDifficultyMenu" prefHeight="32.0" prefWidth="200.0" text="Choose difficulty">
+            <Button layoutX="434.0" layoutY="77.0" mnemonicParsing="false" onAction="#openChooseDifficultyMenu" prefHeight="32.0" prefWidth="200.0" styleClass="upperButtons" stylesheets="@style.css" text="Choose difficulty">
                <font>
-                  <Font name="Arial Bold" size="17.0" />
+                  <Font name="Arial Bold" size="18.0" />
                </font>
             </Button>
-            <Button layoutX="687.0" layoutY="70.0" mnemonicParsing="false" onAction="#openLeaderboardMenu" prefHeight="45.0" prefWidth="56.0">
+            <Button layoutX="741.0" layoutY="71.0" mnemonicParsing="false" onAction="#openLeaderboardMenu" prefHeight="45.0" prefWidth="56.0" styleClass="upperButtons" stylesheets="@style.css">
                <graphic>
                   <ImageView fx:id="cupid1" fitHeight="37.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -85,14 +84,10 @@
                   </ImageView>
                </graphic>
             </Button>
-            <Button layoutX="749.0" layoutY="70.0" mnemonicParsing="false" onAction="#openSettingsMenu">
-               <graphic>
-                  <ImageView fx:id="cupid11" fitHeight="37.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@settings.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
+            <Button fx:id="changeStyle" layoutX="656.0" layoutY="72.0" mnemonicParsing="false" onAction="#handleChangeStyle" prefHeight="45.0" prefWidth="78.0" styleClass="upperButtons" stylesheets="@style.css" text="Style">
+               <font>
+                  <Font name="Arial Bold" size="20.0" />
+               </font>
             </Button>
             <Text layoutX="271.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mistakes:" wrappingWidth="78.0">
                <font>
@@ -106,49 +101,49 @@
             </Label>
             <HBox layoutX="264.0" layoutY="793.0" prefHeight="60.0" prefWidth="540.0">
                <children>
-                  <Button fx:id="button_one" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="1">
+                  <Button fx:id="button_one" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="1">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_two" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="2">
+                  <Button fx:id="button_two" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="2">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_three" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="3">
+                  <Button fx:id="button_three" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="3">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_four" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="4">
+                  <Button fx:id="button_four" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="4">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_five" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="5">
+                  <Button fx:id="button_five" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="5">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_six" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="6">
+                  <Button fx:id="button_six" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="6">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_seven" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="7">
+                  <Button fx:id="button_seven" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="7">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_eight" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="8">
+                  <Button fx:id="button_eight" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="8">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
-                  <Button fx:id="button_nine" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="9">
+                  <Button fx:id="button_nine" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" styleClass="numbersRowButtons" stylesheets="@style.css" text="9">
                      <font>
-                        <Font name="Arial Bold" size="21.0" />
+                        <Font name="Arial Bold" size="20.0" />
                      </font>
                   </Button>
                </children>
@@ -158,6 +153,11 @@
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Text>
+            <Button fx:id="pauseButton" alignment="CENTER" layoutX="753.0" layoutY="122.0" mnemonicParsing="false" onAction="#handlePauseButton" prefHeight="32.0" prefWidth="41.0" styleClass="upperButtons" stylesheets="@style.css" text="| |" textAlignment="CENTER">
+               <font>
+                  <Font name="Arial Bold" size="17.0" />
+               </font>
+            </Button>
             <Label fx:id="difficultyLabel" layoutX="537.0" layoutY="125.0" prefHeight="25.0" prefWidth="84.0" text="currentDifficulty">
                <font>
                   <Font name="Arial Bold" size="17.0" />
@@ -178,40 +178,35 @@
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Label>
-            <Button fx:id="pauseButton" layoutX="495.0" layoutY="35.0" mnemonicParsing="false" onAction="#handlePauseButton" prefHeight="32.0" prefWidth="78.0" text="Pause">
-               <font>
-                  <Font name="Arial Bold" size="17.0" />
-               </font>
-            </Button>
          </children>
       </AnchorPane>
       <AnchorPane fx:id="darkOverlay" prefHeight="913.0" prefWidth="1069.0" styleClass="dark-overlay" stylesheets="@style.css" visible="false" />
-      <AnchorPane fx:id="chooseDifficultyMenu" layoutX="140.0" layoutY="357.0" prefHeight="200.0" prefWidth="800.0" styleClass="anchorPane" stylesheets="@style.css" visible="false">
+      <AnchorPane fx:id="chooseDifficultyMenu" layoutX="140.0" layoutY="357.0" prefHeight="200.0" prefWidth="800.0" styleClass="anchorPaneDef" stylesheets="@style.css" visible="false">
          <children>
-            <Button fx:id="closeChooseDifficultyMenuButton" layoutX="374.0" layoutY="161.0" mnemonicParsing="false" onAction="#closeChooseDifficultyMenu" prefWidth="52.0" text="Cancel" textAlignment="CENTER" />
+            <Button fx:id="closeChooseDifficultyMenuButton" layoutX="355.0" layoutY="151.0" mnemonicParsing="false" onAction="#closeChooseDifficultyMenu" prefHeight="35.0" prefWidth="90.0" styleClass="upperButtons" stylesheets="@style.css" text="Cancel" textAlignment="CENTER" />
             <Text layoutX="308.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Choose difficulty" textAlignment="CENTER" wrappingWidth="185.0">
                <font>
                   <Font name="Arial Bold" size="17.0" />
                </font>
             </Text>
-            <Button fx:id="easyDifficultyButton" layoutX="169.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameEasyDifficulty" prefHeight="53.0" prefWidth="139.0" text="Easy">
+            <Button fx:id="easyDifficultyButton" layoutX="169.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameEasyDifficulty" prefHeight="53.0" prefWidth="139.0" styleClass="upperButtons" stylesheets="@style.css" text="Easy">
                <font>
                   <Font name="Arial Bold" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="MediumDifficultyButton" layoutX="331.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameMediumDifficulty" prefHeight="53.0" prefWidth="139.0" text="Medium">
+            <Button fx:id="MediumDifficultyButton" layoutX="331.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameMediumDifficulty" prefHeight="53.0" prefWidth="139.0" styleClass="upperButtons" stylesheets="@style.css" text="Medium">
                <font>
                   <Font name="Arial Bold" size="12.0" />
                </font>
             </Button>
-            <Button fx:id="hardDifficultyButton" layoutX="493.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameHardDifficulty" prefHeight="53.0" prefWidth="139.0" text="Hard">
+            <Button fx:id="hardDifficultyButton" layoutX="493.0" layoutY="74.0" mnemonicParsing="false" onAction="#newGameHardDifficulty" prefHeight="53.0" prefWidth="139.0" styleClass="upperButtons" stylesheets="@style.css" text="Hard">
                <font>
                   <Font name="Arial Bold" size="12.0" />
                </font>
             </Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="leaderboardMenu" layoutX="270.0" layoutY="186.0" prefHeight="542.0" prefWidth="540.0" styleClass="anchorPane" stylesheets="@style.css" visible="false">
+      <AnchorPane fx:id="leaderboardMenu" layoutX="270.0" layoutY="186.0" prefHeight="542.0" prefWidth="540.0" styleClass="anchorPaneDef" stylesheets="@style.css" visible="false">
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="542.0" prefWidth="540.0" spacing="10.0">
                <children>

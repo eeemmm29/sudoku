@@ -1,8 +1,8 @@
-.anchorPane {
-    /* -fx-background-image: url('../sdk_img_type1.jpg'); */
+.anchorPaneDef {
     -fx-background-size: 100% 100%;
     -fx-background-color: white;
 }
+
 
 .text-field-style {
     -fx-alignment: center;
@@ -21,11 +21,18 @@
 }
 
 .wrong-guess {
-    -fx-text-fill: red;
+    -fx-text-fill: red !important;
 }
 
 .hint {
     -fx-text-fill: green !important;
+}
+
+.note-cell {
+    -fx-text-fill: orange;
+    -fx-font-family: "Arial Bold";
+    -fx-font-size: 20.0;
+    -fx-translate-x: -15px; -fx-translate-y: -15px;
 }
 
 .dark-overlay {
@@ -34,20 +41,89 @@
 
 .first-place {
     -fx-border-color: gold;
-    -fx-border-width: 5;
+    -fx-border-width: 3;
 }
 
 .second-place {
     -fx-border-color: silver;
-    -fx-border-width: 5;
+    -fx-border-width: 3;
 }
 
 .third-place {
     -fx-border-color: #CD7F32;
-    -fx-border-width: 5;
+    -fx-border-width: 3;
 }
 
 .other-place {
     -fx-border-color: black;
-    -fx-border-width: 5;
+    -fx-border-width: 3;
+}
+
+
+/* _________________________________ */
+
+
+.upperButtons {
+    -fx-font-size: 18px;
+}
+
+.lowerButtons {
+    -fx-font-size: 14px;
+}
+
+.numbersRowButtons {
+    -fx-font-size: 20px;
+}
+
+.upperButtons,
+.lowerButtons,
+.numbersRowButtons {
+    -fx-background-color:
+        #ffffff,
+        linear-gradient(#fffdfd, #ffffff),
+        linear-gradient(#ffffff, #ffffff),
+        linear-gradient(#ffffff, #ffffff);
+    -fx-background-insets: 0, 1, 2, 3;
+    -fx-background-radius: 3, 2, 2, 2;
+    -fx-text-fill: black;
+    -fx-border-color: #a6a6a6;
+    -fx-border-width: 1;
+    -fx-border-radius: 3, 2, 2, 2;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.3), 2, 0.0, 0, 1);
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+}
+
+.upperButtons:hover,
+.lowerButtons:hover,
+.numbersRowButtons:hover {
+    -fx-background-color:
+        #f0f0f0,
+        linear-gradient(#e6e6e6, #f0f0f0),
+        linear-gradient(#f9f9f9, #dcdcdc),
+        linear-gradient(#f4f4f4, #ececec);
+    -fx-text-fill: #333333;
+}
+
+#chooseDifficultyMenu,
+#leaderboardMenu {
+    -fx-border-color:black;
+    -fx-border-width:3px;
+}
+
+/* .upperButtons:active,
+.lowerButtons:active,
+.numbersRowButtons:active {
+    -fx-background-color:
+        #e0e0e0,
+        linear-gradient(#dcdcdc, #e0e0e0),
+        linear-gradient(#e9e9e9, #d0d0d0),
+        linear-gradient(#e4e4e4, #d8d8d8);
+    -fx-text-fill: #000000;
+} */
+
+/* ____________new style____________ */
+
+.newStyle {
+    -fx-background-color: #ffcccc;
 }
