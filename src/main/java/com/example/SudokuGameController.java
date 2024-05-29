@@ -310,10 +310,10 @@ public class SudokuGameController {
             int row = hintCell.getRow();
             int col = hintCell.getCol();
 
-            hintCell.getStyleClass().addAll("text-field-style", "hint");
             hintCell.setText(String.valueOf(puzzle.numbers[row][col]));
             hintCell.setStatus(CellStatus.CORRECT_GUESS);
             hintCell.setEditable(false);
+            hintCell.getStyleClass().add("hint");
         }
     }
 
