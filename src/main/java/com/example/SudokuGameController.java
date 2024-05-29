@@ -50,10 +50,14 @@ public class SudokuGameController {
     private Puzzle puzzle = new Puzzle();
     private DatabaseManager dm = new DatabaseManager();
 
+    // For the note feature
+    private Label[][] labels =  new Label[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
+
     // A dark overlay for the menus that appear above the main menu
     @FXML private AnchorPane darkOverlay;
     
     @FXML private AnchorPane mainPane;
+    @FXML private AnchorPane mainMenu;
     @FXML private Label scoreLabel;
     @FXML private Label mistakesLabel;
     @FXML private Label difficultyLabel;
@@ -74,12 +78,36 @@ public class SudokuGameController {
     
     // Pause button
     @FXML private Button pauseButton;
+    // Change color
+    @FXML private Button changeStyle;
 
     @FXML private void handlePauseButton() {
-        boolean visible = gridPane.isVisible();
-        gridPane.setVisible(!visible);
-        if (visible) stopTimer();
-        else continueTimer();
+
+        // Pause the timer and reverse the visibility of all cells
+        boolean visible = cells[0][0].isVisible();
+        if (visible) {
+            stopTimer();
+            pauseButton.setText("▶");
+        } else {
+            continueTimer();
+            pauseButton.setText("| |");
+        }
+
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                cells[row][col].setVisible(!visible);
+            }
+        }
+    }
+
+    @FXML public void handleChangeStyle() {
+            if (mainMenu.getStyleClass().contains("anchorPaneDef")) {
+                mainMenu.getStyleClass().remove("anchorPaneDef");
+                mainMenu.getStyleClass().add("newStyle");
+            } else {
+                mainMenu.getStyleClass().remove("newStyle");
+                mainMenu.getStyleClass().add("anchorPaneDef");
+            }
     }
 
     // New game button
@@ -88,8 +116,12 @@ public class SudokuGameController {
     @FXML private Button hint;
     // Used for counting score correctly
     private boolean isHint;
+
     // Note button
-    @FXML private Button note;
+    private boolean isNoteMode = false;
+    @FXML private void handleNoteButton() {
+        isNoteMode = !isNoteMode;
+    }
 
     private void openMenu(AnchorPane menu) {
         darkOverlay.setVisible(true);
@@ -167,11 +199,11 @@ public class SudokuGameController {
         closeMenu(leaderboardMenu);
     }
 
-    @FXML
-    private void openSettingsMenu() {
-        // TODO settings menu
-        System.out.println("Settings");
-    }
+    // @FXML
+    // private void openSettingsMenu() {
+    //     // TODO settings menu
+    //     System.out.println("Settings");
+    // }
 
     /**
      * Generate a new puzzle and reset the game board of cells based on the puzzle.
@@ -294,10 +326,13 @@ public class SudokuGameController {
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 cells[row][col] = new Cell();
+                labels[row][col] = new Label();
                 // Set position properties for each cell
                 cells[row][col].setPosition(row, col);
                 cells[row][col].setEditable(true); // Set all cells as editable initially
+                labels[row][col].getStyleClass().add("note-cell");
                 gridPane.add(cells[row][col], col, row); // Add the cell to the gridPane
+                gridPane.add(labels[row][col], col, row); // Add the label to the gridPane
 
                 // Create final copies of row and col
                 final int finalRow = row;
@@ -370,90 +405,95 @@ public class SudokuGameController {
         @Override
         public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
-            // Debugging output to verify values
-            System.out.println("Old Value: " + oldValue + ", New Value: " + newValue);
-
-            // Do nothing if the new value is the same as the old value
-            if (newValue == oldValue) {
-                System.out.println("No change in value, skipping processing.");
-                return;
-            }
-
             // Get a reference of the Cell that triggers this action event
             Cell sourceCell = (Cell) ((ReadOnlyProperty) observable).getBean();
-    
-            // Try parsing the text to an integer
-            try {
-                int numberIn = Integer.parseInt(newValue);
-                // Rest of your code handling the parsed integer
-            
-                /*
-                * Check the numberIn against sourceCell.number.
-                * Update the cell status sourceCell.status,
-                * and re-paint the cell via sourceCell.paint().
-                */
-                if (numberIn == sourceCell.getNumber()) {
-                    sourceCell.setStatus(CellStatus.CORRECT_GUESS);
-                    sourceCell.getStyleClass().add("correct-guess");
-                    sourceCell.setEditable(false);
-                    System.out.println("Correct guess");
 
-                    if (isHint) currentScore = Math.max(currentScore - 10, 0);
-                    else currentScore += 30;
-                    isHint = false;
-                } else {
-                    sourceCell.setStatus(CellStatus.WRONG_GUESS);
-                    sourceCell.getStyleClass().add("wrong-guess");
-                    System.out.println("Wrong guess");
+            // Debugging output to verify values
+            System.out.println("Old Value: " + oldValue + ", New Value: " + newValue);
+            System.out.println("Is note mode: " + isNoteMode);
 
-                    currentMistakes++;
-                    mistakesLabel.setText(Integer.toString(currentMistakes));
+            // Check if the game is currently in note mode. If it is, don't compare the input with the correct answer.
+            if (!isNoteMode) {
 
-                    currentScore = Math.max(currentScore - 10, 0);
-                }
+                labels[sourceCell.getRow()][sourceCell.getCol()].setText("");
 
-                scoreLabel.setText(Integer.toString(currentScore));
-                
-                // For debugging
-                System.out.println("You entered " + numberIn);
+                // Try parsing the text to an integer
+                try {
+                    // Clear the styles so the previous ones don't carry over to the next input
+                    sourceCell.getStyleClass().clear();
+                    sourceCell.getStyleClass().add("text-field-style");
 
-                /*
-                * Check if the player has solved the puzzle after this move,
-                * by calling isSolved(). Put up a congratulation JOptionPane, if so.
-                */
-                if (isSolved()) {
-                    System.out.println("Puzzle solved!");
-                    stopTimer();
+                    int numberIn = Integer.parseInt(newValue);
 
-                    // Alert alert = new Alert(AlertType.INFORMATION);
-                    // alert.setTitle("Congratulations!");
-                    // alert.setHeaderText(null);
-                    // alert.setContentText("Puzzle solved!");
-                    // alert.showAndWait();
+                    inputCheck(numberIn, sourceCell);
                     
-                    TextInputDialog td = new TextInputDialog();
-                    td.setTitle("Congratulations");
-                    td.setHeaderText("Puzzle solved!\nEnter your name"); 
+                    // For debugging
+                    System.out.println("You entered " + numberIn);
 
-                    Button okButton = (Button) td.getDialogPane().lookupButton(ButtonType.OK);
-                    // Disable the OK button initially
-                    okButton.setDisable(true);
+                    /*
+                    * Check if the player has solved the puzzle after this move,
+                    * by calling isSolved(). Put up a congratulation JOptionPane, if so.
+                    */
+                    if (isSolved()) {
+                        System.out.println("Puzzle solved!");
+                        stopTimer();
+                        
+                        TextInputDialog td = new TextInputDialog();
+                        td.setTitle("Congratulations");
+                        td.setHeaderText("Puzzle solved!\nEnter your name"); 
 
-                    // Add a listener to the input field to enable/disable the OK button based on input
-                    td.getEditor().textProperty().addListener((observabletd, oldValuetd, newValuetd) -> {
-                        okButton.setDisable(newValuetd.trim().isEmpty());
-                    });
+                        Button okButton = (Button) td.getDialogPane().lookupButton(ButtonType.OK);
+                        // Disable the OK button initially
+                        okButton.setDisable(true);
 
-                    Optional<String> result = td.showAndWait();
-                    result.ifPresent(name -> {
-                        dm.insertData(name, currentScore, seconds, timeLabel.getText());
-                    });
+                        // Add a listener to the input field to enable/disable the OK button based on input
+                        td.getEditor().textProperty().addListener((observabletd, oldValuetd, newValuetd) -> {
+                            okButton.setDisable(newValuetd.trim().isEmpty());
+                        });
+
+                        Optional<String> result = td.showAndWait();
+                        result.ifPresent(name -> {
+                            dm.insertData(name, currentScore, seconds, timeLabel.getText());
+                        });
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case where the text is not a valid integer
+                    System.err.println("Invalid input: " + newValue);
                 }
-            } catch (NumberFormatException e) {
-                // Handle the case where the text is not a valid integer
-                System.err.println("Invalid input: " + newValue);
+            } else {
+                // sourceCell.getStyleClass().add("note-cell");
+                sourceCell.setText("");
+                labels[sourceCell.getRow()][sourceCell.getCol()].setText(newValue);
             }
         }
+    }
+
+    private void inputCheck(int numberIn, Cell sourceCell) {
+        /*
+        * Check the numberIn against sourceCell.number.
+        * Update the cell status sourceCell.status.
+        */
+        if (numberIn == sourceCell.getNumber()) {
+            sourceCell.setStatus(CellStatus.CORRECT_GUESS);
+            sourceCell.getStyleClass().add("correct-guess");
+            sourceCell.setEditable(false);
+            System.out.println("Correct guess");
+
+            if (isHint) currentScore = Math.max(currentScore - 10, 0);
+            else currentScore += 30;
+            isHint = false;
+        } else {
+            sourceCell.setStatus(CellStatus.WRONG_GUESS);
+            sourceCell.getStyleClass().add("wrong-guess");
+            System.out.println("Wrong guess");
+
+            currentMistakes++;
+            mistakesLabel.setText(Integer.toString(currentMistakes));
+
+            currentScore = Math.max(currentScore - 10, 0);
+        }
+
+        scoreLabel.setText(Integer.toString(currentScore));
     }
 
     EventHandler<ActionEvent> numberButtonHandler = new EventHandler<ActionEvent>() {
