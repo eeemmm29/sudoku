@@ -291,6 +291,13 @@ public class SudokuGameController {
 
     @FXML
     private void handleHintButtonClick() {
+        boolean noteModeChange = false;
+
+        if (isNoteMode) {
+            isNoteMode = false;
+            noteModeChange = true;
+        }
+
         isHint = true;
 
         List<Cell> emptyCells = new ArrayList<>();
@@ -314,6 +321,11 @@ public class SudokuGameController {
             hintCell.setStatus(CellStatus.CORRECT_GUESS);
             hintCell.setEditable(false);
             hintCell.getStyleClass().add("hint");
+        }
+
+        if (noteModeChange) {
+            isNoteMode = true;
+            noteModeChange = false;
         }
     }
 
